@@ -1,3 +1,5 @@
+# Possible values : 0, YES, APPLY
+PROFILE = 0
 
 SRC = src/
 
@@ -216,12 +218,15 @@ DRIVER_OBJS = $(SRC)drivers/dingux-sdl/config.o $(SRC)drivers/dingux-sdl/input.o
 OBJS = $(CORE_OBJS) $(BOARDS_OBJS) $(INPUT_OBJS) $(MAPPERS_OBJS) $(UTILS_OBJS) \
 	$(COMMON_DRIVER_OBJS) $(DRIVER_OBJS)
 
-TOOLCHAIN=/opt/gcw0-toolchain
+ifneq ($(LINUX),yes)
+TOOLCHAIN?=/opt/miyoo
+CROSS_COMPILE?=arm-linux-
+endif
 BINDIR=$(TOOLCHAIN)/usr/bin
-CC = $(BINDIR)/mipsel-linux-gcc
-CXX = $(BINDIR)/mipsel-linux-g++
-LD = $(BINDIR)/mipsel-linux-g++
-AS = $(BINDIR)/mipsel-linux-as
+CC = $(BINDIR)/$(CROSS_COMPILE)gcc
+CXX = $(BINDIR)/$(CROSS_COMPILE)g++
+LD = $(BINDIR)/$(CROSS_COMPILE)g++
+AS = $(BINDIR)/$(CROSS_COMPILE)as
 
 SYSROOT     := $(shell $(CC) --print-sysroot)
 SDL_CONFIG  := $(SYSROOT)/usr/bin/sdl-config
@@ -240,7 +245,7 @@ F_OPTS = -fomit-frame-pointer -fno-builtin -fno-common -fpermissive
 DEVICE = gcw0
 ODVERSION =
 
-TARGET = fceux_od
+TARGET = fceux
 
 RELEASE = 2.6.6
 RELEASE_DATE = $(shell date +%F)
@@ -265,7 +270,9 @@ ifeq ($(DEVICE),retrofw)
 else ifeq ($(DEVICE),lepus)
     OPTIMIZE += -mips32
 else
-    OPTIMIZE += -mips32r2
+ifneq ($(LINUX),yes)
+    OPTIMIZE += -march=armv5te -mtune=arm926ej-s
+endif
 endif
 OPTIMIZE += -ffast-math -ftree-vectorize -fno-strict-aliasing -fipa-pta
 ifdef PROFILE_GEN
@@ -295,6 +302,8 @@ else ifeq ($(DEVICE),lepus)
 CFLAGS += -DLEPUS
 else ifeq ($(ODVERSION),2014)
 CFLAGS += -DOD2014
+else
+CFLAGS += -DRETROFW -DMIYOO
 endif
 CXXFLAGS += $(CFLAGS)
 LDFLAGS  += $(CC_OPTS)
@@ -302,6 +311,14 @@ ifdef STATIC
 LDFLAGS  += -static-libgcc -static-libstdc++
 endif
 LIBS = $(SDL_LIBS) -lz -lm
+
+ifeq ($(PROFILE), YES)
+HOMEPATH	= /mnt
+CFLAGS 		+= -fprofile-generate=$(HOMEPATH)/profile -fprofile-arcs
+LIBS		+= -lgcov
+else ifeq ($(PROFILE), APPLY)
+CFLAGS		+= -fprofile-use
+endif
 
 OPK_TARGET = $(TARGET)-$(RELEASE)-$(RELEASE_DATE)
 SKELETON_DESKTOP = opk/default.$(DEVICE).desktop
@@ -312,7 +329,7 @@ MANUAL = bin/$(TARGET).man.txt
 ifeq ($(DEVICE),retrofw)
 all: $(OPK_TARGET).opk $(OPK_TARGET).ipk
 else
-all: $(OPK_TARGET).opk
+all: $(TARGET)
 endif
 
 $(SYSTEM_DESKTOP): $(SKELETON_DESKTOP) $(MANUAL)
@@ -330,7 +347,7 @@ $(OPK_TARGET).opk: $(TARGET) $(SYSTEM_DESKTOP) $(MANUAL)
 	@echo Creating bin/$(OPK_TARGET).opk...
 ifeq ($(DEBUG),no)
 ifeq ($(PERF),no)
-	@$(BINDIR)/mipsel-linux-strip bin/$(TARGET)
+	@$(BINDIR)/$(CROSS_COMPILE)strip bin/$(TARGET)
 endif
 endif
 	@mksquashfs bin/$(TARGET) src/drivers/dingux-sdl/gui/*.bmp opk/fceux.png output/palettes $(MANUAL) $(SYSTEM_DESKTOP) bin/$(OPK_TARGET).opk -all-root -no-xattrs -noappend -no-exports
