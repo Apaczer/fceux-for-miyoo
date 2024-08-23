@@ -17,14 +17,14 @@
 #if defined(WIN32)
 #include <intrin.h>
 #pragma intrinsic(__rdtsc)
-#elif defined(__MIPSEL__)
+#elif defined(__MIPSEL__) || defined(__arm__)
 #else
 #include <x86intrin.h>
 #endif
 
 static uint64_t rdtsc()
 {
-#if defined(__MIPSEL__)
+#if defined(__MIPSEL__) || defined(__arm__)
 	// RDTSC is for x86.
 	// For MIPS exits register Count(CP0 Register 9,Select 0)
 	// but accessing to coprocessor 0 is not possible from userspace (SIGILL)
