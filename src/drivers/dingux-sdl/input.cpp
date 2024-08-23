@@ -301,8 +301,12 @@ static void KeyboardCommands() {
 	}
 
 	// Power flick (SDLK_HOME) to enter GUI
+#ifdef MIYOO
+	if (MenuRequested) {
+#else
 	if (_keyonly(DINGOO_L2)
 		|| MenuRequested) {
+#endif
 		SilenceSound(1);
 		FCEUGUI_Run();
 		SilenceSound(0);
@@ -430,6 +434,7 @@ static void KeyboardCommands() {
 			}
 			resetkey(DINGOO_B);
 		}
+#ifndef MIYOO
 		if(_keyonly(DINGOO_X)) { // R + X Pixel Astect Ratio
 			if (s_fullscreen == 1) {
 				int aspect_select;
@@ -449,6 +454,7 @@ static void KeyboardCommands() {
 			}
 			resetkey(DINGOO_X);
 		}
+#endif
 		if(_keyonly(DINGOO_Y)) { // R + Y Clip sides
 			if (s_fullscreen == 0 || s_fullscreen == 1) {
 				int clipsides;
