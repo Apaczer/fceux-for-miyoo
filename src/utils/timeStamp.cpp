@@ -17,13 +17,27 @@
 #if defined(WIN32)
 #include <intrin.h>
 #pragma intrinsic(__rdtsc)
+#elif defined(__MIPSEL__)
 #else
 #include <x86intrin.h>
 #endif
 
 static uint64_t rdtsc()
 {
+#if defined(__MIPSEL__)
+	// RDTSC is for x86.
+	// For MIPS exits register Count(CP0 Register 9,Select 0)
+	// but accessing to coprocessor 0 is not possible from userspace (SIGILL)
+	// uint32_t tsc;
+	// __asm__ __volatile__("mfc0 %0, $9" : "=r"(tsc));
+	// printf("TSC: %d\n", tsc);
+	// return static_cast<uint64_t>(tsc);
+	
+	// TSC seems not be used for any relevant task (for now) so we return 0.
+	return 0;
+#else
 	return __rdtsc();
+#endif
 }
 
 namespace FCEU

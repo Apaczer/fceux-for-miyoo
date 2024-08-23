@@ -30,12 +30,16 @@
 
 void *FCEU_amalloc(size_t size, size_t alignment)
 {
+	#ifdef OD2014
+	void *ret = FCEU_malloc(size + 16); // old alignment for old gcw0/rg350 toolchain
+	#else
 	size = (size + alignment - 1) & ~(alignment-1);
 
 	#ifdef _MSC_VER
 	void *ret = _aligned_malloc(size,alignment);
 	#else
 	void *ret = aligned_alloc(alignment,size);
+	#endif
 	#endif
 
 	if(!ret)
@@ -46,10 +50,14 @@ void *FCEU_amalloc(size_t size, size_t alignment)
 
 void FCEU_afree(void* ptr)
 {
+	#ifdef OD2014
+	FCEU_free(ptr);
+	#else
 	#ifdef _MSC_VER
 	_aligned_free(ptr);
 	#else
 	free(ptr);
+	#endif
 	#endif
 }
 

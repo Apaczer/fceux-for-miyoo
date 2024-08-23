@@ -1,0 +1,10 @@
+Package: fceux_RELEASE
+Version: 
+Description: RetroFW port of FCEUX RELEASE
+Section: emus
+Priority: optional
+Maintainer: plrguez
+Architecture: mipsel
+Homepage: https://github.com/pl.rguez/fceux-for-retrogame
+Depends:
+Source: https://github.com/pl.rguez/fceux-for-retrogame

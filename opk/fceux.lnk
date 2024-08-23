@@ -1,0 +1,6 @@
+title=FCEUX RELEASE
+description=NES/FC Emulator
+exec=/home/retrofw/emus/fceux_RELEASE/TARGET.dge
+selectordir=/home/retrofw/roms/nes
+selectorfilter=.zip,.nes,.fds
+clock=600

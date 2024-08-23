@@ -1,0 +1,12 @@
+[Desktop Entry]
+Name=FCEUX RELEASE
+Comment=NES/Famicom emulator
+Exec=TARGET %f
+Icon=fceux
+Categories=emulators;
+X-OD-Manual=MANUAL
+X-OD-Selector=/home/retrofw/roms/nes
+X-OD-Filter=.zip,.nes,.fds
+Terminal=false
+Type=Application
+StartupNotify=true

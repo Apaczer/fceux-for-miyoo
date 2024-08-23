@@ -209,7 +209,13 @@ namespace FCEU
 
 		uint64_t toCounts(void)
 		{
+                        #if defined(DINGUX)
+                        // To fix unexpected results if constant is used directly
+                        // here
+                        return (ts.tv_sec * static_cast<uint64_t>(ONE_SEC_TO_NANO)) + ts.tv_nsec;
+                        #else
 			return (ts.tv_sec * ONE_SEC_TO_NANO) + ts.tv_nsec;
+                        #endif
 		}
 
 		static uint64_t countFreq(void)

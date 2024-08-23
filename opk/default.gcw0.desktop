@@ -1,0 +1,11 @@
+[Desktop Entry]
+Name=FCEUX RELEASE
+Comment=NES/Famicom emulator
+Exec=TARGET %f
+Terminal=false
+Type=Application
+X-OD-Manual=MANUAL
+MimeType=application/zip;application/x-nes-rom;application/x-fds-disk;
+StartupNotify=true
+Icon=fceux
+Categories=emulators;

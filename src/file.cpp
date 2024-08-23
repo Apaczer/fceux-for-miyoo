@@ -752,6 +752,12 @@ std::string FCEU_MakeFName(int type, int id1, const char *cd1)
 			if(odirs[FCEUIOD_FDSROM])
 				sprintf(ret,"%s" PSS "disksys.rom",odirs[FCEUIOD_FDSROM]);
 			else
+#ifdef DINGUX
+				// Taken from RetroFW (pingflood)
+				// Try to load disksys.rom from current rom directory
+				sprintf(ret,"%s" PSS "disksys.rom",FileBaseDirectory);
+				if (stat(ret,&tmpstat) != 0)
+#endif
 				sprintf(ret,"%s" PSS "disksys.rom",BaseDirectory.c_str());
 			break;
 		case FCEUMKF_PALETTE:sprintf(ret,"%s" PSS "%s.pal",BaseDirectory.c_str(),FileBase);break;
@@ -768,6 +774,9 @@ std::string FCEU_MakeFName(int type, int id1, const char *cd1)
 				sprintf(ret,"%s" PSS "%s*.fc?",odirs[FCEUIOD_STATES],FileBase);
 			else
 				sprintf(ret,"%s" PSS "fcs" PSS "%s*.fc?",BaseDirectory.c_str(),FileBase);
+			break;
+		case FCEUMKF_CFG:
+			sprintf(ret,"%s" PSS "cfg" PSS "%s.cfg",BaseDirectory.c_str(),FileBase);
 			break;
 	}
 

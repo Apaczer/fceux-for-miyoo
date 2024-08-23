@@ -31,7 +31,17 @@ public:
 
 public:
     Config(std::string d) : _dir(d) { }
+ #if DINGUX
+    Config(const Config &config);
+ #endif
     ~Config() { }
+
+#if DINGUX
+    /**
+     * Reloads configuration file with given filename
+     */
+    int reload(const std::string &);
+#endif
 
     /**
      * Adds a configuration option.  All options must be added before
@@ -90,6 +100,13 @@ public:
      * configuration file.
      */
     int save();
+
+#if DINGUX
+    /**
+     * Like save with given filename
+     */
+    int save(const std::string &);
+#endif
 };
 
 #endif // !__CONFIGSYS_H

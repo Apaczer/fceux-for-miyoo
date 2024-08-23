@@ -75,6 +75,8 @@ extern void RefreshThrottleFPS();
 #include "drivers/win/ramwatch.h"
 #include "drivers/win/memwatch.h"
 #include "drivers/win/tracer.h"
+#elif defined(DINGUX)
+#include "drivers/dingux-sdl/dingoo.h"
 #else
 #ifdef __QT_DRIVER__
 #include "drivers/Qt/sdl.h"
@@ -517,6 +519,9 @@ FCEUGI *FCEUI_LoadGameVirtual(const char *name, int OverwriteVidMode, bool silen
 		// ################################## End of SP CODE ###########################
 #endif
 
+#ifdef DINGUX
+		FCEUD_ReloadConfig();
+#endif
 		if (OverwriteVidMode)
 			FCEU_ResetVidSys();
 
@@ -575,6 +580,14 @@ FCEUGI *FCEUI_LoadGameVirtual(const char *name, int OverwriteVidMode, bool silen
 		}
 		if (FrozenAddressCount)
 			FCEU_DispMessage("%d cheats active", 0, FrozenAddressCount);
+#endif
+#ifdef DINGUX
+		// Taken from gameblabla's port
+		if (PAL) {
+			    setenv("SDL_VIDEO_REFRESHRATE", "50", 0);
+		} else {
+			    setenv("SDL_VIDEO_REFRESHRATE", "60", 0);
+		}
 #endif
 	}
 	else {
@@ -845,6 +858,29 @@ void FCEUI_Emulate(uint8 **pXBuf, int32 **SoundBuf, int32 *SoundBufSize, int ski
 	CallRegisteredLuaFunctions(LUACALL_AFTEREMULATION);
 #endif
 
+#ifdef FRAMESKIP
+	//Solve stuttering for RetroFW
+	//
+	//With upstream commit 08c602a calls to FCEU_PutImage() has been moved
+	//to here from FCEUPPU_Loop() and FCEUX_PPU_Loop().
+	//
+	//Previosly, the calls to FCEU_PutImage() from FCEUPPU_Loop() was only
+	//executed if not skip was stablished, in other case FCEU_PutImageDummy()
+	//was called.
+	//This last call is still done in FCEUPPU_Loop if skip is stablished.
+	//
+	//For new PPU FCEUX_PPU_Loop() is used, and in this case there was no
+	//logic to call to FCEU_PutImage().
+	//
+	//On RetroFW I have noted some stuttering that dissapear if the previous
+	//logic is used and don't call FCEU_PutImage() if skip is stablished.
+	//This change don't have negative effect for OpenDingux (stock or beta).
+	//
+	//https://github.com/TASVideos/fceux/commit/08c602a3f2c1a92364231ff55e7de497da59b79e
+	//
+	//Don't call FCEU_PutImage() if skip is stablished or new PPU is used.
+	if ( !skip && !((newppu) && (GameInfo->type != GIT_NSF)) )
+#endif
 	FCEU_PutImage();
 
 #ifdef __WIN_DRIVER__
@@ -861,7 +897,7 @@ void FCEUI_Emulate(uint8 **pXBuf, int32 **SoundBuf, int32 *SoundBufSize, int ski
 	extern int KillFCEUXonFrame;
 	if (KillFCEUXonFrame && (FCEUMOV_GetFrame() >= KillFCEUXonFrame))
 		DoFCEUExit();
-#else
+#elif !defined(DINGUX)
 		extern int KillFCEUXonFrame;
 	if (KillFCEUXonFrame && (FCEUMOV_GetFrame() >= KillFCEUXonFrame))
 		exit(0);
@@ -1083,6 +1119,16 @@ void FCEU_ResetVidSys(void) {
 	if (PAL)
 		dendy = 0;
 
+#ifdef DINGUX
+	FCEUD_VideoRegionSave(PAL);
+	// Taken from gameblabla's port
+	if (PAL) {
+		    setenv("SDL_VIDEO_REFRESHRATE", "50", 0);
+	} else {
+		    setenv("SDL_VIDEO_REFRESHRATE", "60", 0);
+	}
+#endif
+
 	if (newppu)
 		overclock_enabled = 0;
 
@@ -1143,6 +1189,14 @@ void FCEUI_SetRenderedLines(int ntscf, int ntscl, int palf, int pall) {
 
 void FCEUI_SetVidSystem(int a) {
 	FSettings.PAL = a ? 1 : 0;
+#ifdef DINGUX
+	// Taken from gameblabla's port
+	if (FSettings.PAL) {
+		    setenv("SDL_VIDEO_REFRESHRATE", "50", 0);
+	} else {
+		    setenv("SDL_VIDEO_REFRESHRATE", "60", 0);
+	}
+#endif
 	if (GameInfo) {
 		FCEU_ResetVidSys();
 		FCEU_ResetPalette();
@@ -1214,6 +1268,14 @@ void FCEUI_SetRegion(int region, int notify)
 			}
 			break;
 	}
+#ifdef DINGUX
+	// Taken from gameblabla's port
+	if (region > 0) {
+		setenv("SDL_VIDEO_REFRESHRATE", "50", 0);
+	} else {
+		setenv("SDL_VIDEO_REFRESHRATE", "60", 0);
+	}
+#endif
 	normalscanlines += newppu;
 	totalscanlines = normalscanlines + (overclock_enabled ? postrenderscanlines : 0);
 	FCEUI_SetVidSystem(pal_emulation);
