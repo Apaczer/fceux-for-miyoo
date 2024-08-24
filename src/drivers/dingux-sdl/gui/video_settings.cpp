@@ -168,7 +168,11 @@ static SettingEntry vd_menu[] =
 	{"HW Video filter", "Hardware scaling video filter", "SDL.VideoFilter", videofilter_update},
 #endif
 	{"Clip sides", "Clips left and right columns", "SDL.ClipSides", clip_update},
+#ifdef SDL_TRIPLEBUF
 	{"Triple buffer", "Triple buffer", "SDL.TripleBuffering", triplebuffering_update},
+#else
+	{"Double buffer", "Double buffer", "SDL.TripleBuffering", triplebuffering_update},
+#endif
 	{"New PPU", "New PPU emulation engine", "SDL.NewPPU", newppu_update},
 	{"NTSC Scanline start", "NTSC first drawn scanline", "SDL.ScanLineStartNTSC", slstart_update},
 	{"NTSC Scanline end", "NTSC last drawn scanline", "SDL.ScanLineEndNTSC", slend_update},
@@ -277,9 +281,13 @@ int RunVideoSettings()
 						sprintf(tmp, "%s", video_filter_tag[itmp]);
 				}
 #endif
-				else if (!strncmp(vd_menu[i].name, "Clip sides", 10) \
-					|| !strncmp(vd_menu[i].name, "New PPU", 7)   \
-					|| !strncmp(vd_menu[i].name, "Triple buffer", 13)   \
+				else if (!strncmp(vd_menu[i].name, "Clip sides", 10)
+					|| !strncmp(vd_menu[i].name, "New PPU", 7)
+#ifdef SDL_TRIPLEBUF
+					|| !strncmp(vd_menu[i].name, "Triple buffer", 13)
+#else
+					|| !strncmp(vd_menu[i].name, "Double buffer", 13)
+#endif
 					|| !strncmp(vd_menu[i].name, "Integer Frame", 13)) {
 					sprintf(tmp, "%s", itmp ? "on" : "off");
 				}
