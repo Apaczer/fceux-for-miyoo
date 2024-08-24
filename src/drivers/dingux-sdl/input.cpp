@@ -332,7 +332,11 @@ static void KeyboardCommands() {
 		}
 		if(_keyonly(DINGOO_X)) { // R + X  toggle fullscreen
 			extern int s_fullscreen; // from dingoo_video.cpp
+#ifdef MIYOO
+			s_fullscreen = (s_fullscreen + 1) % 4;
+#else
 			s_fullscreen = (s_fullscreen + 1) % 5;
+#endif
 			g_config->setOption("SDL.Fullscreen", s_fullscreen);
 			FCEUD_DriverReset();
 			dingoo_clear_video();

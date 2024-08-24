@@ -7,18 +7,23 @@ extern Config *g_config;
 // Fullscreen mode
 static char *scale_tag[] = {
 		"Original",
+#ifndef MIYOO
+// no GPU means no HW scaling or at least it never worked on Miyoo
 		"Hardware",
+#endif
 		"Aspect",
 		"FS Fast",
 		"FS Smooth"
 };
 
 // Fullscreen mode
+#ifndef MIYOO
 static char *aspect_tag[] = {
 		"1:1",
 		"8:7",
 		"4:3",
 };
+#endif
 
 #ifndef RETROFW
 static char *video_filter_tag[] = {
@@ -33,7 +38,11 @@ static void fullscreen_update(unsigned long key)
 	int val;
 	g_config->getOption("SDL.Fullscreen", &val);
 
+#ifdef MIYOO
+	if (key == DINGOO_RIGHT) val = val < 3 ? val+1 : 3;
+#else
 	if (key == DINGOO_RIGHT) val = val < 4 ? val+1 : 4;
+#endif
 	if (key == DINGOO_LEFT) val = val > 0 ? val-1 : 0;
    
 	g_config->setOption("SDL.Fullscreen", val);
@@ -163,7 +172,9 @@ static void integer_framerate_update(unsigned long key)
 static SettingEntry vd_menu[] = 
 {
 	{"Video scaling", "Select video scale mode", "SDL.Fullscreen", fullscreen_update},
+#ifndef MIYOO
 	{"HW PAR", "Hardware scaling Pixel AR", "SDL.AspectSelect", aspectselect_update},
+#endif
 #ifndef RETROFW
 	{"HW Video filter", "Hardware scaling video filter", "SDL.VideoFilter", videofilter_update},
 #endif
@@ -270,9 +281,11 @@ int RunVideoSettings()
 				if (!strncmp(vd_menu[i].name, "Video scaling", 13)) {
 					sprintf(tmp, "%s", scale_tag[itmp]);
 				}
+#ifndef MIYOO
 				else if (!strncmp(vd_menu[i].name, "HW PAR", 6)) {
 					sprintf(tmp, "%s", aspect_tag[itmp]);
 				}
+#endif
 #ifndef RETROFW
 				else if (!strncmp(vd_menu[i].name, "HW Video filter", 15)) {
 					if (itmp > 1)

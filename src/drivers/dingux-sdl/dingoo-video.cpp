@@ -169,6 +169,7 @@ int InitVideo(FCEUGI *gi) {
 	if (!s_VideoModeSet) {
 		int w, h;
 		if (s_fullscreen == 1) {
+#ifndef MIYOO
 			int aspect_ratio;
 #ifndef RETROFW
 			int videofilter;
@@ -207,6 +208,7 @@ int InitVideo(FCEUGI *gi) {
 			        fwrite("N", 1, 1, keep_aspect_ratio_file);
 			        fclose(keep_aspect_ratio_file);
 		        }
+#endif
 #endif
 		} else {
 			w = 320; h = 240;
@@ -405,19 +407,31 @@ void BlitScreen(uint8 *XBuf) {
 
 	register uint8 *pBuf = XBuf;
 
+#ifdef MIYOO
+	if(s_fullscreen == 3) { // fullscreen smooth
+#else
 	if(s_fullscreen == 4) { // fullscreen smooth
+#endif
 		if (s_clipSides) {
 			upscale_320x240_bilinearish_clip((uint32 *)screen->pixels, (uint8 *)XBuf + 256 * 8, 256);
 		} else {
 			upscale_320x240_bilinearish_noclip((uint32 *)screen->pixels, (uint8 *)XBuf + 256 * 8, 256);
 		}
+#ifdef MIYOO
+	} else if(s_fullscreen == 2) { // fullscreen
+#else
 	} else if(s_fullscreen == 3) { // fullscreen
+#endif
 		switch(screen->w) {
 			case 480: upscale_480x272((uint32 *)screen->pixels, (uint8 *)XBuf + 256 * 8); break;
 			case 400: upscale_384x240((uint32 *)screen->pixels, (uint8 *)XBuf + 256 * 8); break;
 			case 320: upscale_320x240((uint32 *)screen->pixels, (uint8 *)XBuf + 256 * 8); break;
 		}
+#ifdef MIYOO
+	} else if(s_fullscreen == 1) { // aspect fullscreen
+#else
 	} else if(s_fullscreen == 2) { // aspect fullscreen
+#endif
 		switch(screen->w) {
 			case 480: upscale_384x272((uint32 *)screen->pixels, (uint8 *)XBuf + 256 * 8); break;
 			case 400:
