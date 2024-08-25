@@ -397,7 +397,7 @@ static void KeyboardCommands() {
 				SilenceSound(0);
 		}
 		if(_keyonly(DINGOO_B)) { // R + B Clip top/bottom
-			if (s_fullscreen == 1) {
+			if (s_fullscreen == 0 || s_fullscreen == 1) {
 				int pal, clip = 0;
 				int start, end;
 				g_config->getOption("SDL.PAL", &pal);
@@ -450,7 +450,7 @@ static void KeyboardCommands() {
 			resetkey(DINGOO_X);
 		}
 		if(_keyonly(DINGOO_Y)) { // R + Y Clip sides
-			if (s_fullscreen == 1) {
+			if (s_fullscreen == 0 || s_fullscreen == 1) {
 				int clipsides;
 				g_config->getOption("SDL.ClipSides", &clipsides);
 				clipsides ^= 1;
