@@ -44,6 +44,7 @@ fceux-net-server
 /output/cheats
 /output/snaps
 /output/sav
+*.ipk
 
 # typical CMake build directory
 /build

@@ -397,6 +397,9 @@ $(TARGET): $(OBJS)
 	@echo Assembling $<...
 	$(CXX) $(CDEFS) $(CXXFLAGS) -c $< -o $@
 
+miyoo-ipk: all
+	gm2xpkg -i -c miyoo/pkg.cfg
+
 clean:
 	@rm -f $(OBJS) bin/$(TARGET) bin/$(OPK_TARGET).opk $(SYSTEM_DESKTOP) $(MANUAL)
 ifeq ($(DEVICE),retrofw)
