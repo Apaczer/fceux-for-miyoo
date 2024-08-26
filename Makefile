@@ -317,7 +317,7 @@ HOMEPATH	= /mnt
 CFLAGS 		+= -fprofile-generate=$(HOMEPATH)/profile -fprofile-arcs
 LIBS		+= -lgcov
 else ifeq ($(PROFILE), APPLY)
-CFLAGS		+= -fprofile-use
+CFLAGS		+= -fprofile-use=miyoo/profile
 endif
 
 OPK_TARGET = $(TARGET)-$(RELEASE)-$(RELEASE_DATE)
