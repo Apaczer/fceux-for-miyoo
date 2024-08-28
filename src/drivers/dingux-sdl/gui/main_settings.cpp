@@ -4,7 +4,7 @@ extern Config *g_config;
 /* MENU COMMANDS */
 
 // Use PAL or NTSC rate
-static void pal_update(unsigned long key) {
+/*static void pal_update(unsigned long key) {
 	int val;
 
 	if (key == DINGOO_RIGHT)
@@ -13,8 +13,25 @@ static void pal_update(unsigned long key) {
 		val = 0;
 
 	g_config->setOption("SDL.PAL", val);
-}
+}*/
+static char *region_tag[] = {
+		"NTSC",
+		"Pal",
+		"Dendy"
+};
 
+static void region_update(unsigned long key)
+{
+	int val;
+	g_config->getOption("SDL.Region", &val);
+
+	if (key == DINGOO_RIGHT)
+		val = val < 2 ? val + 1 : 2;
+	if (key == DINGOO_LEFT)
+		val = val > 0 ? val - 1 : 0;
+
+	g_config->setOption("SDL.Region", val);
+}
 // Use PAL or NTSC rate
 static void autoresume_update(unsigned long key) {
 	int val;
@@ -119,7 +136,8 @@ static void frameskip_update(unsigned long key) {
 
 static SettingEntry
 	st_menu[] = {
-		{ "PAL", "Use PAL timing", "SDL.PAL", pal_update },
+        { "Region", "Mode timing", "SDL.Region", region_update },		
+        //{ "PAL", "Use PAL timing", "SDL.PAL", pal_update },
 		{ "Auto-Resume", "Auto-Resume Play", "SDL.AutoResume", autoresume_update },
 		{ "Game Genie", "Emulate Game Genie", "SDL.GameGenie", gg_update },
 		{ "No sprite limit", "Disable sprite limit", "SDL.DisableSpriteLimit", sprite_limit_update },
@@ -221,6 +239,8 @@ int RunMainSettings() {
 
 				if (!strncmp(st_menu[i].name, "Mouse speed", 11)) {
 					sprintf(tmp, "%d", itmp);
+   				} else if (!strncmp(st_menu[i].name, "Region", 6)) {
+					sprintf(tmp, "%s", region_tag[itmp]);
 #ifdef FRAMESKIP
 				} else if (!strncmp(st_menu[i].name, "Frameskip", 9)) {
 					if (itmp<0)

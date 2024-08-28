@@ -257,8 +257,9 @@ int LoadGame(const char *path) {
 
 	// set pal/ntsc
 	int id;
-	g_config->getOption("SDL.PAL", &id);
-	FCEUI_SetRegion(id);
+	//g_config->getOption("SDL.PAL", &id);
+    g_config->getOption("SDL.Region", &id);
+	FCEUI_SetRegion(id,1);
 
 	std::string filename;
 	g_config->getOption("SDL.Sound.RecordFile", &filename);
