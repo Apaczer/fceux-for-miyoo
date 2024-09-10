@@ -6,15 +6,14 @@ extern Config *g_config;
 // Use PAL or NTSC rate
 static void pal_update(unsigned long key) {
 	int val;
-
+	g_config->getOption("SDL.PAL", &val);
 	if (key == DINGOO_RIGHT)
-		val = 1;
+		val = val < 2 ? val + 1 : 2;
 	if (key == DINGOO_LEFT)
-		val = 0;
+		val = val > 0 ? val - 1 : 0;
 
 	g_config->setOption("SDL.PAL", val);
 }
-
 // Use PAL or NTSC rate
 static void autoresume_update(unsigned long key) {
 	int val;
@@ -119,7 +118,7 @@ static void frameskip_update(unsigned long key) {
 
 static SettingEntry
 	st_menu[] = {
-		{ "PAL", "Use PAL timing", "SDL.PAL", pal_update },
+		{ "PAL", "Change TV system", "SDL.PAL", pal_update },
 		{ "Auto-Resume", "Auto-Resume Play", "SDL.AutoResume", autoresume_update },
 		{ "Game Genie", "Emulate Game Genie", "SDL.GameGenie", gg_update },
 		{ "No sprite limit", "Disable sprite limit", "SDL.DisableSpriteLimit", sprite_limit_update },
@@ -221,6 +220,13 @@ int RunMainSettings() {
 
 				if (!strncmp(st_menu[i].name, "Mouse speed", 11)) {
 					sprintf(tmp, "%d", itmp);
+   				} else if (!strncmp(st_menu[i].name, "PAL", 3)) {
+					if (itmp==0)
+						sprintf(tmp, "%s", "NTSC");
+					else if (itmp==1)
+						sprintf(tmp, "%s", "Pal");
+					else if (itmp==2)
+						sprintf(tmp, "%s", "Dendy");
 #ifdef FRAMESKIP
 				} else if (!strncmp(st_menu[i].name, "Frameskip", 9)) {
 					if (itmp<0)

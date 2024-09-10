@@ -123,12 +123,11 @@ inline double GetYScale(int yres) {
 	return ((double) yres) / s_tlines;
 }
 void FCEUD_VideoChanged() {
-	int buf;
-	g_config->getOption("SDL.PAL", &buf);
-	if (buf)
-		PAL = 1;
-	else
-		PAL = 0;
+	int region;
+	g_config->getOption("SDL.PAL", &region);
+	if 	(region==0)		{dendy = 0;PAL = 0;}
+	else if (region==1)	{dendy = 0;PAL = 1;}
+	else				{dendy = 1;PAL = 0;}
 }
 /**
  * Attempts to initialize the graphical video display.  Returns 0 on
