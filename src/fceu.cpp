@@ -1120,7 +1120,7 @@ void FCEU_ResetVidSys(void) {
 		dendy = 0;
 
 #ifdef DINGUX
-	FCEUD_VideoRegionSave(PAL);
+	//FCEUD_VideoRegionSave(PAL);
 	// Taken from gameblabla's port
 	if (PAL) {
 		    setenv("SDL_VIDEO_REFRESHRATE", "50", 0);
