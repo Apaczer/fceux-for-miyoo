@@ -14,7 +14,19 @@ static void pal_update(unsigned long key) {
 
 	g_config->setOption("SDL.PAL", val);
 }
-// Use PAL or NTSC rate
+
+static void autopal_update(unsigned long key) {
+	int val;
+
+	if (key == DINGOO_RIGHT)
+		val = 1;
+	if (key == DINGOO_LEFT)
+		val = 0;
+
+	g_config->setOption("SDL.AutoDetectPAL", val);
+}
+
+// Enable AutoResume from savestate
 static void autoresume_update(unsigned long key) {
 	int val;
 
@@ -118,7 +130,8 @@ static void frameskip_update(unsigned long key) {
 
 static SettingEntry
 	st_menu[] = {
-		{ "PAL", "Change TV system", "SDL.PAL", pal_update },
+		{ "PAL", "Change TV system region", "SDL.PAL", pal_update },
+		{ "AutoDetectPAL", "Auto-Detect ROM region", "SDL.AutoDetectPAL", autopal_update },
 		{ "Auto-Resume", "Auto-Resume Play", "SDL.AutoResume", autoresume_update },
 		{ "Game Genie", "Emulate Game Genie", "SDL.GameGenie", gg_update },
 		{ "No sprite limit", "Disable sprite limit", "SDL.DisableSpriteLimit", sprite_limit_update },

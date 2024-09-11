@@ -135,6 +135,7 @@ Config * InitConfig() {
 
 	config->addOption('g', "gamegenie", "SDL.GameGenie", 0);
 	config->addOption("pal", "SDL.PAL", 0);
+	config->addOption("autoPal", "SDL.AutoDetectPAL", 1);
 	config->addOption("frameskip", "SDL.Frameskip", 0);
 	config->addOption("intFrameRate", "SDL.IntFrameRate", 0);
 	config->addOption("clipsides", "SDL.ClipSides", 0);
