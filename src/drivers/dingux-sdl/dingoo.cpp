@@ -219,6 +219,7 @@ void FCEUD_Message(char *s) {
  * Reload game config or default config
  */
 int FCEUD_ReloadConfig(void) {
+#if 0
 	int pal;
 
 	g_config->getOption("SDL.PAL", &pal);
@@ -228,6 +229,7 @@ int FCEUD_ReloadConfig(void) {
 
 	// Update emulator core configs
 	UpdateEMUCore(g_config);
+#endif
 
 	return 1;
 }
