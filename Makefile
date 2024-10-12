@@ -259,10 +259,10 @@ ifeq ($(DEBUG),yes)
 else
 ifeq ($(PERF),yes)
     LDFLAGS =
-    OPTIMIZE =  -O3 -ggdb -flto
+    OPTIMIZE =  -O3 -ggdb
 else
     LDFLAGS = -s
-    OPTIMIZE =  -O3 -flto
+    OPTIMIZE =  -O3
 endif
 endif
 ifeq ($(DEVICE),retrofw)
@@ -305,7 +305,6 @@ CFLAGS += -DOD2014
 else
 CFLAGS += -DRETROFW -DMIYOO
 endif
-CXXFLAGS += $(CFLAGS)
 LDFLAGS  += $(CC_OPTS)
 ifdef STATIC
 LDFLAGS  += -static-libgcc -static-libstdc++
@@ -314,11 +313,16 @@ LIBS = $(SDL_LIBS) -lz -lm
 
 ifeq ($(PROFILE), YES)
 HOMEPATH	= /mnt
-CFLAGS 		+= -fprofile-generate=$(HOMEPATH)/profile -fprofile-arcs
+PGO 		+= -fprofile-generate=$(HOMEPATH)/profile -fprofile-arcs
 LIBS		+= -lgcov
 else ifeq ($(PROFILE), APPLY)
-CFLAGS		+= -fprofile-use=miyoo/profile
+PGO		+= -fprofile-use=miyoo/profile
+else
+LTO		+= -flto
 endif
+
+CFLAGS		+= $(PGO) $(LTO)
+CXXFLAGS += $(CFLAGS)
 
 OPK_TARGET = $(TARGET)-$(RELEASE)-$(RELEASE_DATE)
 SKELETON_DESKTOP = opk/default.$(DEVICE).desktop
