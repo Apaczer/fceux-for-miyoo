@@ -130,8 +130,8 @@ static void frameskip_update(unsigned long key) {
 
 static SettingEntry
 	st_menu[] = {
-		{ "PAL", "Change TV system region", "SDL.PAL", pal_update },
-		{ "AutoDetectPAL", "Auto-Detect ROM region", "SDL.AutoDetectPAL", autopal_update },
+		{ "Region", "Change TV system region", "SDL.PAL", pal_update },
+		{ "Detect region", "Region Auto-Detect PAL/NTSC", "SDL.AutoDetectPAL", autopal_update },
 		{ "Auto-Resume", "Auto-Resume Play", "SDL.AutoResume", autoresume_update },
 		{ "Game Genie", "Emulate Game Genie", "SDL.GameGenie", gg_update },
 		{ "No sprite limit", "Disable sprite limit", "SDL.DisableSpriteLimit", sprite_limit_update },
@@ -233,7 +233,7 @@ int RunMainSettings() {
 
 				if (!strncmp(st_menu[i].name, "Mouse speed", 11)) {
 					sprintf(tmp, "%d", itmp);
-   				} else if (!strncmp(st_menu[i].name, "PAL", 3)) {
+   				} else if (!strncmp(st_menu[i].name, "Region", 3)) {
 					if (itmp==0)
 						sprintf(tmp, "%s", "NTSC");
 					else if (itmp==1)
