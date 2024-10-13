@@ -313,12 +313,11 @@ LIBS = $(SDL_LIBS) -lz -lm
 
 ifeq ($(PROFILE), YES)
 HOMEPATH	= /mnt
-PGO 		+= -fprofile-generate=$(HOMEPATH)/profile -fprofile-arcs
+PGO 		= -fprofile-generate=$(HOMEPATH)/profile -fprofile-arcs
 LIBS		+= -lgcov
 else ifeq ($(PROFILE), APPLY)
-PGO		+= -fprofile-use=miyoo/profile
-else
-LTO		+= -flto
+PGO		= -fprofile-use=miyoo/profile
+LTO		= -flto
 endif
 
 CFLAGS		+= $(PGO) $(LTO)
